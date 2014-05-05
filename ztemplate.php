@@ -1,6 +1,6 @@
 <?php
-// ZTemplate 1.0.4
-// © 2011 Zdeněk Gromnica
+// ZTemplate 1.0.5
+// © 2011 – 2013 Zdeněk Gromnica
 
 // Basic usage:
 /*
@@ -19,18 +19,30 @@ $zt->var      ->  $zt['var']
 {foo bar}     ->  <?php foo(bar) ?>
 {foo(bar)}    ->  <?php foo(bar) ?>
 
+1.0.5 – 14:53 1.11.2013
+- removed global $warnings (why was it there?)
+* $templatedir defaults to 'templates/'
+* $currentTemplate defaults to ''
+* $currentTemplate is written without the final /
 */
 
 // Main template function
 // use this to include a file from the current template
 function template($tfile, $tfolder = '', $tfolder2 = NULL) {
   global $currentTemplate, $templatedir,
-    $zi, $zt, $t, $baseurl, $warnings; // Variables templates have access to
+    $zi, $zt, $t, $baseurl; // Variables templates have access to
   
+	if (!isset($currentTemplate)) {
+		$currentTemplate = '';
+	}
+	if (!isset($templatedir)) {
+		$templatedir = 'templates/';
+	}
+	
   if ($tfolder === true) // Use a template from a provided absolute path
     $tmfolder = $tfolder2;
   else // Use a template from the default path
-    $tmfolder = $templatedir.$currentTemplate.$tfolder;
+    $tmfolder = $templatedir.(empty($currentTemplate) ? '' : $currentTemplate.'/').$tfolder;
   
   $thefile = $tmfolder.$tfile.'.php'; // Original file
   $tmpfolder = TMP_DIR.$tmfolder; // Parsed file dir
