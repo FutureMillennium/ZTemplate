@@ -1,5 +1,5 @@
 <?php
-// ZTemplate 1.02
+// ZTemplate 1.0.4
 // © 2011 Zdeněk Gromnica
 
 // Basic usage:
@@ -15,7 +15,7 @@ $zt->var      ->  $zt['var']
 {else}        ->  <?php } else { ?>
 {/if}         ->  <?php } ?>
 {/foreach}    ->  <?php } ?>
-{p foo}        ->  <?php foo ?>
+{p foo}       ->  <?php foo ?>
 {foo bar}     ->  <?php foo(bar) ?>
 {foo(bar)}    ->  <?php foo(bar) ?>
 
@@ -24,7 +24,7 @@ $zt->var      ->  $zt['var']
 // Main template function
 // use this to include a file from the current template
 function template($tfile, $tfolder = '', $tfolder2 = NULL) {
-  global $templatedir, $currentTemplate,
+  global $currentTemplate, $templatedir,
     $zi, $zt, $t, $baseurl, $warnings; // Variables templates have access to
   
   if ($tfolder === true) // Use a template from a provided absolute path
