@@ -8,6 +8,22 @@
 body {
 	font-family: sans-serif;
 	margin: 50px 50px 125px 50px;
+	line-height: 1.35;
+}
+h2, h3 {
+	margin: 25px 0 15px 0;
+}
+a {
+	color: #000;
+	background-image: linear-gradient(#d3d3d3, #d3d3d3);
+  background-size: 2px 2px;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+	text-decoration: none;
+}
+a:hover {
+	color:#203499;
+  background-image: linear-gradient(#203499, #203499);
 }
 #main {
 	max-width: 800px;
@@ -19,6 +35,7 @@ pre {
 	background: #f8f8f8;
 	padding: 25px;
 	tab-size: 4;
+	font-size: 14px;
 }
 #backtotop a {
 	display: inline-block;
@@ -31,7 +48,7 @@ pre {
 	right: 0;
 }
 #backtotop a:hover {
-	text-decoration: underline;
+	background: #3fc2f0;
 }
 .example {
 	overflow: hidden;
@@ -53,6 +70,9 @@ pre {
 	line-height: 18px;
 	margin: 0 0 15px 0;
 }
+code {
+	font-size: 15px;
+}
 </style>
 	<script>
 $(function() {
@@ -72,14 +92,18 @@ $(window).scroll(function() {
 <div id="main">
 <h1>ZTemplate</h1>
 
-<p>version 2.0.0</p>
+<h2>version 2.0.0</h2>
 
-<h2>Example usage</h2>
+<p>ZTemplate is a super simple PHP templating system that allows you to write shorthand PHP code directly into HTML.</p>
+
+<h2>Quick start – example usage</h2>
 
 <ol>
-	<li>Make sure the script can write to the <a href="#TMP_DIR">temporary directory</a> (defaults to 'tmp')</li>
-	<li>Place your template in the <a href="#TEMPLATES_DIR">'templates' directory</a> (by default), e.g. templates/example.php:
+	<li>Put <code>ztemplate.php</code> somewhere the script can execute it, e.g. <code>libs/ztemplate.php</code>.</li>
+	<li>Make sure the script can write to the <a href="#TMP_DIR">temporary directory</a> – <code>tmp/</code> by default.</li>
+	<li>Place your template in the <a href="#TEMPLATES_DIR"><code>templates/</code> directory</a> (by default), e.g. <code>templates/example.php</code>:
 		<pre>
+&lt;!doctype html&gt;
 &lt;html&gt;
 	&lt;head&gt;
 		&lt;title&gt;{$t-&gt;title}&lt;/title&gt;
@@ -90,7 +114,7 @@ $(window).scroll(function() {
 &lt;/html&gt;
 </pre>
 	</li>
-	<li>Include ZTemplate and call the template:
+	<li>Include ZTemplate and call the template, e.g. <code>index.php</code>:
 		<pre>
 &lt;?php
 require 'libs/ztemplate.php';
@@ -104,7 +128,9 @@ template('example');
 </ol>
 
 <h3>Result</h3>
+<h4><code>index.php</code> output:</h4>
 <pre>
+&lt;!doctype html&gt;
 &lt;html&gt;
 	&lt;head&gt;
 		&lt;title&gt;Example title&lt;/title&gt;
@@ -115,19 +141,81 @@ template('example');
 &lt;/html&gt;
 </pre>
 
+<h4>Directory tree</h4>
 
+<pre>
+/
+	index.php
+	libs/
+		ztemplate.php
+	templates/
+		example.php
+	tmp/
+		templates/
+			example.php
+</pre>
 
+<p>Note that the <code>tmp/</code> directory and its contents get generated automatically.</p>
 
 <h2>Usage</h2>
 
-<h3>template($templateName)</h3>
-<h3>template($templateName, $templateSubdirectory)</h3>
-<h3>template($templateName, $isDirectoryAbsolute, $templateDirectory)</h3>
+<h3><code>template($templateName)</code></h3>
+<p>Parses and includes the template named <code>$templateName</code> from the <a href="#TEMPLATES_DIR">templates directory</a>, i.e. <code>TEMPLATES_DIR/$templateName.php</code></p>
+
+<div class="example">
+	<div class="left">
+		<h4>Example</h4>
+
+		<pre>template('foo');</pre>
+	</div>
+	
+	<div class="right">
+		<h5>Parses and includes</h5>
+
+		<pre>templates/foo.php</pre>
+	</div>
+</div>
 
 
+<h3><code>template($templateSubdirectory, $templateName)</code></h3>
+<p>Parses and includes the template named <code>$templateName</code> from the <code>$templateSubdirectory</code> subdirectory of the <a href="#TEMPLATES_DIR">templates directory</a>, i.e. <code>TEMPLATES_DIR/$templateSubdirectory/$templateName.php</code></p>
+
+<div class="example">
+	<div class="left">
+		<h4>Example</h4>
+
+		<pre>template('foo', 'bar');</pre>
+	</div>
+	
+	<div class="right">
+		<h5>Parses and includes</h5>
+
+		<pre>templates/foo/bar.php</pre>
+	</div>
+</div>
 
 
-<h2>Template syntax</h2>
+<h3><code>template($isDirectoryAbsolute, $templateDirectory, $templateName)</code></h3>
+<p>If <code>$isDirectoryAbsolute</code> is <code>true</code>, parses and includes the template named <code>$templateName</code> from the absolute directory <code>$templateDirectory</code>, i.e. <code>$templateDirectory/$templateName.php</code></p>
+
+<p>If <code>$isDirectoryAbsolute</code> is <code>false</code>, acts the same as <code>template($templateSubdirectory, $templateName)</code></p>
+
+<div class="example">
+	<div class="left">
+		<h4>Example</h4>
+
+		<pre>template(true, '/foo', 'bar');</pre>
+	</div>
+	
+	<div class="right">
+		<h5>Parses and includes</h5>
+
+		<pre>/foo/bar.php</pre>
+	</div>
+</div>
+
+
+<h2><code>{*comment*}</code><br />Template syntax</h2>
 
 <h3>Comments</h3>
 
@@ -149,7 +237,7 @@ template('example');
 </div>
 
 
-<h3>Print variable</h3>
+<h3><code>{$foo}</code><br />Print variable</h3>
 
 <div class="example">
 	<div class="left">
@@ -171,7 +259,7 @@ template('example');
 </div>
 
 
-<h3>If, else if, else</h3>
+<h3><code>{if foo}</code><br />If, else if, else</h3>
 
 <div class="example">
 	<div class="left">
@@ -205,7 +293,7 @@ template('example');
 </div>
 
 
-<h3>For each</h3>
+<h3><code>{foreach foo}</code><br />For each</h3>
 
 <div class="example">
 	<div class="left">
@@ -231,7 +319,7 @@ template('example');
 </div>
 
 
-<h3>Function call</h3>
+<h3><code>{foo bar}</code><br />Function call</h3>
 
 <div class="example">
 	<div class="left">
@@ -255,7 +343,7 @@ template('example');
 </div>
 
 
-<h3>PHP code</h3>
+<h3><code>{? foo}</code><br />PHP code</h3>
 
 <div class="example">
 	<div class="left">
@@ -277,7 +365,7 @@ template('example');
 </div>
 
 
-<h3>Template variable shorthand</h3>
+<h3><code>$t->foo</code><br />Template variable shorthand</h3>
 
 <div class="example">
 	<div class="left">
@@ -307,7 +395,7 @@ $t['foo']
 
 <h2>Template variables</h2>
 
-<h3 id="baseurl">Base URL</h3>
+<h3 id="baseurl"><code>$baseurl</code><br />Base URL</h3>
 
 <p><code>$baseurl</code></p>
 
@@ -319,24 +407,27 @@ $t['foo']
 </pre>
 
 
-<h3 id="t">Template variable</h3>
+<h3 id="t"><code>$t</code><br />Template variable</h3>
 
 <p><code>$t</code></p>
 
 <h4>Example</h4>
 
 <pre>
-&lt;?php
-$templatedir = 'templates';
+{$t->foo}
+{$t['foo']}
+{if $t->foo}
+	Lorem ipsum
+{/if}
 </pre>
 
 
 
 <h2>Settings</h2>
 
-<h3 id="TEMPLATES_DIR">Templates directory</h3>
+<h3 id="TEMPLATES_DIR"><code>TEMPLATES_DIR</code><br />Templates directory</h3>
 
-<p>Defined by the <code>TEMPLATES_DIR</code> constant. Should be defined without the last / (slash), unless it's the root directory <code>'/'</code>.</p>
+<p>Defined by the <code>TEMPLATES_DIR</code> constant. Should be defined without the last <code>/</code> (slash), unless it's the root directory <code>'/'</code>.</p>
 
 <p>Defaults to <code>'templates'</code>.</p>
 
@@ -348,11 +439,11 @@ define('TEMPLATES_DIR', 'templates');
 </pre>
 
 
-<h3 id="currentTemplate">Current template directory</h3>
+<h3 id="currentTemplate"><code>$currentTemplate</code><br />Current template directory</h3>
 
-<p>Defined by the <code>$currentTemplate</code> variable. Should be defined without the last / (slash).</p>
+<p>Defined by the <code>$currentTemplate</code> variable. Should be defined without the last <code>/</code> (slash). Empty string (<code>''</code>) means the <a href="#TEMPLATES_DIR">templates directory</a> is used as the current template directory, instead of any subdirectories.</p>
 
-<p>Defaults to <code>''</code>.</p>
+<p>Defaults to <code>''</code> (empty string).</p>
 
 <h4>Example</h4>
 
@@ -362,9 +453,9 @@ $currentTemplate = 'foo';
 </pre>
 
 
-<h3 id="TMP_DIR">Temporary directory</h3>
+<h3 id="TMP_DIR"><code>TMP_DIR</code><br />Temporary directory</h3>
 
-<p>Defined by the <code>TMP_DIR</code> constant. Should be defined without the last / (slash), unless it's the root directory <code>'/'</code>.</p>
+<p>Defined by the <code>TMP_DIR</code> constant. Should be defined without the last <code>/</code> (slash), unless it's the root directory <code>'/'</code>.</p>
 
 <p>Defaults to <code>'tmp'</code>.</p>
 
@@ -376,9 +467,15 @@ define('TMP_DIR', 'tmp');
 </pre>
 
 
-<h3 id="CHECK_TEMPLATE_UPDATES">Check for new template updates</h3>
+<h3 id="CHECK_TEMPLATE_UPDATES"><code>CHECK_TEMPLATE_UPDATES</code><br />Check for new template updates</h3>
 
 <p>Defined by the <code>CHECK_TEMPLATE_UPDATES</code> constant.</p>
+
+<p>If <code>true</code>, ZTemplate compares the date changed of the template file with the date of the pre-generated (parsed) template file in the <a href="#TMP_DIR">temporary directory</a>. If it's newer, it gets re-generated. If there is no pre-generated template file, it gets generated.</p>
+
+<p>If <code>false</code>, ZTemplate doesn't compare the date changed of the template file with the date of the pre-generated (parsed) template file in the <a href="#TMP_DIR">temporary directory</a>. If there is no pre-generated template file, it gets generated as normal.</p>
+
+<p>Set to <code>false</code> if you don't intend to change the template files anymore to gain a minuscule performance boost. If you delete the pre-generated template files in the <a href="#TMP_DIR">temporary directory</a>, they will get re-generated even when <code>CHECK_TEMPLATE_UPDATES</code> is <code>false</code>.</p>
 
 <p>Defaults to <code>true</code>.</p>
 

@@ -1,6 +1,7 @@
 <?php
 // ZTemplate 2.0.0
 // © 2011 – 2015 Zdeněk Gromnica
+// see manual.html for more
 
 // Main template function
 // use this to include a file from the current template
@@ -24,10 +25,13 @@ function template($tfile, $tfolder = '', $tfolder2 = NULL) {
   if ($tfolder === true) // Use a template from a provided absolute path
     $tmfolder = $tfolder2;
   else // Use a template from the default path
-    $tmfolder = $templatedir.(empty($currentTemplate) ? '' : $currentTemplate.'/').$tfolder;
+    $tmfolder = $templatedir.(empty($currentTemplate) ? '' : $currentTemplate.'/').(empty($tfolder) ? '' : $tfolder.'/');
   
   $thefile = $tmfolder.$tfile.'.php'; // Original file
-  $tmpfolder = TMP_DIR.$tmfolder; // Parsed file dir
+	if (TMP_DIR == '/') // Parsed file dir
+		$tmpfolder = TMP_DIR.$tmfolder;
+	else
+		$tmpfolder = TMP_DIR.'/'.$tmfolder;
   $tmpfile = $tmpfolder.$tfile.'.php'; // Parsed file
 	
 	if (defined('CHECK_TEMPLATE_UPDATES') == false) // Check for newer template - set to false to increase speed
