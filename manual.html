@@ -119,8 +119,8 @@ $(window).scroll(function() {
 &lt;?php
 require 'libs/ztemplate.php';
 
-$t['title'] = 'Example title';
-$t['content'] = 'Hello world!';
+$t->title = 'Example title';
+$t->content = 'Hello world!';
 
 template('example');
 </pre>
@@ -204,20 +204,24 @@ template('example');
 	<div class="left">
 		<h4>Example</h4>
 
-		<pre>template(true, '/foo', 'bar');</pre>
+		<pre>template(true, 'foo', 'bar');
+template(true, '/foo', 'bar');
+template(true, '/', 'foo');</pre>
 	</div>
 	
 	<div class="right">
 		<h5>Parses and includes</h5>
 
-		<pre>/foo/bar.php</pre>
+		<pre>foo/bar.php
+/foo/bar.php
+/foo.php</pre>
 	</div>
 </div>
 
 
-<h2><code>{*comment*}</code><br />Template syntax</h2>
+<h2>Template syntax</h2>
 
-<h3>Comments</h3>
+<h3><code>{*comment*}</code><br />Comments</h3>
 
 <div class="example">
 	<div class="left">
@@ -301,7 +305,7 @@ template('example');
 
 	<pre>
 {foreach foo}
-	Lorem
+	Lorem ipsum
 {/foreach}
 </pre>
 	</div>
@@ -312,7 +316,7 @@ template('example');
 
 	<pre>
 &lt;?php foreach (foo) { ?&gt;
-	Lorem
+	Lorem ipsum
 &lt;?php } ?&gt;
 </pre>
 	</div>
@@ -439,7 +443,7 @@ define('TEMPLATES_DIR', 'templates');
 </pre>
 
 
-<h3 id="currentTemplate"><code>$currentTemplate</code><br />Current template directory</h3>
+<h3 id="currentTemplate"><code>$currentTemplate</code><br />Current template subdirectory</h3>
 
 <p>Defined by the <code>$currentTemplate</code> variable. Should be defined without the last <code>/</code> (slash). Empty string (<code>''</code>) means the <a href="#TEMPLATES_DIR">templates directory</a> is used as the current template directory, instead of any subdirectories.</p>
 

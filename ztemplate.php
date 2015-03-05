@@ -3,73 +3,119 @@
 // © 2011 – 2015 Zdeněk Gromnica
 // see manual.html for more
 
+if (isset($t) == false) {
+	$t = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+}
+
 // Main template function
 // use this to include a file from the current template
-function template($tfile, $tfolder = '', $tfolder2 = NULL) {
+function template($isDirectoryAbsolute, $templateDirectory = null, $templateName = null) {
   global $currentTemplate,
     $t, $baseurl; // Variables templates have access to
-		
-	if (defined('TMP_DIR') == false)
-		define('TMP_DIR', 'tmp');
-  
+	
+	// Current template subdirectory
 	if (!isset($currentTemplate)) {
 		$currentTemplate = '';
 	}
 	
-	if (defined('TEMPLATES_DIR') == false)
-		define('TEMPLATES_DIR', 'templates');
-	if (!empty(TEMPLATES_DIR)) {
-		$templatedir = TEMPLATES_DIR.'/';
+	// Templates directory
+	if (defined('TEMPLATES_DIR')) {
+		$templatesdir = TEMPLATES_DIR;
+		if (TEMPLATES_DIR != '/')
+			$templatesdir .= '/';
+	} else {
+		$templatesdir = 'templates/';
 	}
 	
-  if ($tfolder === true) // Use a template from a provided absolute path
-    $tmfolder = $tfolder2;
-  else // Use a template from the default path
-    $tmfolder = $templatedir.(empty($currentTemplate) ? '' : $currentTemplate.'/').(empty($tfolder) ? '' : $tfolder.'/');
-  
-  $thefile = $tmfolder.$tfile.'.php'; // Original file
-	if (TMP_DIR == '/') // Parsed file dir
-		$tmpfolder = TMP_DIR.$tmfolder;
-	else
-		$tmpfolder = TMP_DIR.'/'.$tmfolder;
-  $tmpfile = $tmpfolder.$tfile.'.php'; // Parsed file
+	// Temporary directory – parsed file dir
+	if (defined('TMP_DIR')) {
+		if (TMP_DIR == '/')
+			$tmpdir = TMP_DIR;
+		else
+			$tmpdir = TMP_DIR.'/';
+	} else {
+		$tmpdir = 'tmp/';
+	}
 	
-	if (defined('CHECK_TEMPLATE_UPDATES') == false) // Check for newer template - set to false to increase speed
-		define('CHECK_TEMPLATE_UPDATES', true);
+	// Template file name and directory
+  if ($isDirectoryAbsolute === true) { // arg 1, using absolute template path
+		if ($templateDirectory == '/') { // arg 2
+			$tmpdir .= $templatesdir.'root/';
+		} else {
+			$subdir = $templateDirectory.'/';
+			$tmpdir .= $templatesdir.$subdir.'/';
+		}
+		$filename = $templateName; // arg 3
+	} else {
+		if ($isDirectoryAbsolute === false) { // arg 1
+			$subdir = $templatesdir.$templateDirectory.'/'; // arg 2
+			$filename = $templateName; // arg 3
+		} elseif (isset($templateDirectory)) { // Subdirectory specified
+			$subdir = $templatesdir.$isDirectoryAbsolute.'/'; // arg 1
+			$filename = $templateDirectory; // arg 2
+		} else {
+			$subdir = $templatesdir;
+			$filename = $isDirectoryAbsolute; // arg 1
+		}
+		$tmpdir .= $subdir;
+	}
+	
+  $templatefile = $subdir.$filename.'.php'; // Original file
+	
+  $tmpfile = $tmpdir.$filename.'.php'; // Parsed file
   
   // Check if parsed version exists
   if (file_exists($tmpfile)) {
-    // Check if the parsed version isn't older than the current template file
-    if (CHECK_TEMPLATE_UPDATES && filemtime($thefile) <= filemtime($tmpfile)) {
-      // Include it
-      include $tmpfile;
-      // We're done here
-      return true;
-    }
+		if (defined('CHECK_TEMPLATE_UPDATES') == false || (defined('CHECK_TEMPLATE_UPDATES') && CHECK_TEMPLATE_UPDATES)) {
+			// Check if the parsed version isn't older than the current template file
+			if (filemtime($templatefile) <= filemtime($tmpfile)) {
+				// Include it
+				include $tmpfile;
+				// We're done here
+				return true;
+			}
+		}
   }
   
   // Check if the template file exists
-  if (!file_exists($thefile))
+  if (!file_exists($templatefile)) {
+		// TODO call error
     return false;
+	}
   
   // Check if the tmp folder exists
-  if (!is_dir($tmpfolder)) {
+  if (!is_dir($tmpdir)) {
     // If not, create it
-    mkdir($tmpfolder, 0777, true);
+    mkdir($tmpdir, 0777, true);
   }
   
   // Read the original file
-  $thefilesize = filesize($thefile);
-  if ($thefilesize > 0) {
-    $handle = fopen($thefile, "r");
-    $contents = fread($handle, $thefilesize);
+  $filesize = filesize($templatefile);
+  if ($filesize > 0) {
+    $handle = fopen($templatefile, "r");
+    $contents = fread($handle, $filesize);
     fclose($handle);
   } else {
     $contents = '';
   }
   
   // Parse it
-  $contents = preg_replace(
+  $contents = ZTemplateParse($contents);
+  
+  // Save the parsed file
+  $handle = fopen($tmpfile, "w");
+  if ($filesize > 0)
+    fwrite($handle, $contents);
+  fclose($handle);
+  
+  // Include the parsed file
+  include $tmpfile;
+  return true;
+}
+
+// Parse helper function
+function ZTemplateParse($content) {
+  return preg_replace(
     array(
       '/\{\*([^\*]|\*[^\}])*\*\}/', // {*comment*}
       '/\$t->([\w\d]+)/', // $t->var
@@ -94,15 +140,5 @@ function template($tfile, $tfolder = '', $tfolder2 = NULL) {
       '<?php \1(\2) ?>',
       '<?php \1 ?>',
     ),
-    $contents);
-  
-  // Save the parsed file
-  $handle = fopen($tmpfile, "w");
-  if ($thefilesize > 0)
-    fwrite($handle, $contents);
-  fclose($handle);
-  
-  // Include the parsed file
-  include $tmpfile;
-  return true;
+    $content);
 }
