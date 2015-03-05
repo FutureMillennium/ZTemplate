@@ -369,32 +369,6 @@ template(true, '/', 'foo');</pre>
 </div>
 
 
-<h3><code>$t->foo</code><br />Template variable shorthand</h3>
-
-<div class="example">
-	<div class="left">
-	<h4>Example</h4>
-
-	<pre>
-$t->foo
-{$t->foo}
-{if $t->foo}
-</pre>
-	</div>
-	
-	<div class="right">
-
-	<h5>Turns into</h5>
-
-	<pre>
-$t['foo']
-&lt;?php echo $t['foo'] ?&gt;
-&lt;?php if ($t['foo']) { ?&gt;
-</pre>
-	</div>
-</div>
-
-
 
 
 <h2>Template variables</h2>

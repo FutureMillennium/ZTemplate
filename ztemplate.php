@@ -118,7 +118,6 @@ function ZTemplateParse($content) {
   return preg_replace(
     array(
       '/\{\*([^\*]|\*[^\}])*\*\}/', // {*comment*}
-      '/\$t->([\w\d]+)/', // $t->var
       '/\{\$([^}]+)\}/', // {$var}
       '/\{(if|foreach) ([^}]+)}/', // {if foo}
       '/\{elseif ([^}]+)}/', // {elseif foo}
@@ -130,7 +129,6 @@ function ZTemplateParse($content) {
     ),
     array(
       '',
-      '$t[\'\1\']', // $t['var']
       '<?php echo $\1 ?>',
       '<?php \1 (\2) { ?>',
       '<?php } elseif (\1) { ?>',
