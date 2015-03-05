@@ -1,0 +1,353 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ZTemplate v2.0.0 manual</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<style>
+body {
+	font-family: sans-serif;
+	margin: 50px 50px 125px 50px;
+}
+#main {
+	max-width: 800px;
+	margin: 0 auto;
+	position: relative;
+}
+pre {
+	border: 1px #ddd solid;
+	background: #f8f8f8;
+	padding: 25px;
+	tab-size: 4;
+}
+#backtotop a {
+	display: inline-block;
+	padding: 15px 25px;
+	text-decoration: none;
+	background: #3eb2f0;
+	color: #fff;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+}
+#backtotop a:hover {
+	text-decoration: underline;
+}
+.example {
+	overflow: hidden;
+}
+.example .left {
+	width: 48%;
+	float: left;
+}
+.example .left h4 {
+	height: 18px;
+	margin: 0 0 15px 0;
+}
+.example .right {
+	margin-left: 52%;
+	width: 48%;
+}
+.example .right h5 {
+	height: 18px;
+	line-height: 18px;
+	margin: 0 0 15px 0;
+}
+</style>
+	<script>
+$(function() {
+	$('#backtotop').hide();
+});
+$(window).scroll(function() {
+	if ($(window).scrollTop() > 200) {
+		$('#backtotop').show();
+	} else {
+		$('#backtotop').hide();
+	}
+});
+</script>
+</head>
+<body>
+
+<div id="main">
+<h1>ZTemplate</h1>
+
+<p>version 2.0.0</p>
+
+<h2>Example usage</h2>
+
+<ol>
+	<li>Make sure the script can write to the <a href="#TMP_DIR">temporary directory</a> (defaults to 'tmp')</li>
+	<li>Place your template in the <a href="#TEMPLATES_DIR">'templates' directory</a> (by default), e.g. templates/example.php:
+		<pre>
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;title&gt;{$t-&gt;title}&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		{$t-&gt;content}
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+	</li>
+	<li>Include ZTemplate and call the template:
+		<pre>
+&lt;?php
+require 'libs/ztemplate.php';
+
+$t['title'] = 'Example title';
+$t['content'] = 'Hello world!';
+
+template('example');
+</pre>
+	</li>
+</ol>
+
+<h3>Result</h3>
+<pre>
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;title&gt;Example title&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		Hello world!
+	&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+
+
+
+<h2>Usage</h2>
+
+<h3>template($templateName)</h3>
+<h3>template($templateName, $templateSubdirectory)</h3>
+<h3>template($templateName, $isDirectoryAbsolute, $templateDirectory)</h3>
+
+
+
+
+<h2>Template syntax</h2>
+
+<h3>Comments</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+{*comment*}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<p><em>(nothing)</em></p>
+	</div>
+</div>
+
+
+<h3>Print variable</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+{$foo}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<pre>
+&lt;?php echo $foo ?&gt;
+</pre>
+	</div>
+</div>
+
+
+<h3>If, else if, else</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+{if foo}
+	Lorem
+{elseif bar}
+	Ipsum
+{else}
+	Dolor
+{/if}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<pre>
+&lt;?php if (foo) { ?&gt;
+	Lorem
+&lt;?php } elseif (bar) { ?&gt;
+	Ipsum
+&lt;?php } else { ?&gt;
+	Dolor
+&lt;?php } ?&gt;
+</pre>
+	</div>
+</div>
+
+
+<h3>For each</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+{foreach foo}
+	Lorem
+{/foreach}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<pre>
+&lt;?php foreach (foo) { ?&gt;
+	Lorem
+&lt;?php } ?&gt;
+</pre>
+	</div>
+</div>
+
+
+<h3>Template variable shorthand</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+$t->foo
+{$t->foo}
+{if $t->foo}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<pre>
+$t['foo']
+&lt;?php echo $t['foo'] ?&gt;
+&lt;?php if ($t['foo']) { ?&gt;
+</pre>
+	</div>
+</div>
+
+
+
+
+<h2>Template variables</h2>
+
+<h3 id="baseurl">Base URL</h3>
+
+<p><code>$baseurl</code></p>
+
+<h4>Example</h4>
+
+<pre>
+&lt;a href=&quot;{$baseurl}&quot;&gt;Home&lt;/a&gt;
+&lt;img src=&quot;{$baseurl}images/foo.png&quot; /&gt;
+</pre>
+
+
+<h3 id="t">Template variable</h3>
+
+<p><code>$t</code></p>
+
+<h4>Example</h4>
+
+<pre>
+&lt;?php
+$templatedir = 'templates';
+</pre>
+
+
+
+<h2>Settings</h2>
+
+<h3 id="TEMPLATES_DIR">Templates directory</h3>
+
+<p>Defined by the <code>TEMPLATES_DIR</code> constant. Should be defined without the last / (slash), unless it's the root directory <code>'/'</code>.</p>
+
+<p>Defaults to <code>'templates'</code>.</p>
+
+<h4>Example</h4>
+
+<pre>
+&lt;?php
+define('TEMPLATES_DIR', 'templates');
+</pre>
+
+
+<h3 id="currentTemplate">Current template directory</h3>
+
+<p>Defined by the <code>$currentTemplate</code> variable. Should be defined without the last / (slash).</p>
+
+<p>Defaults to <code>''</code>.</p>
+
+<h4>Example</h4>
+
+<pre>
+&lt;?php
+$currentTemplate = 'foo';
+</pre>
+
+
+<h3 id="TMP_DIR">Temporary directory</h3>
+
+<p>Defined by the <code>TMP_DIR</code> constant. Should be defined without the last / (slash), unless it's the root directory <code>'/'</code>.</p>
+
+<p>Defaults to <code>'tmp'</code>.</p>
+
+<h4>Example</h4>
+
+<pre>
+&lt;?php
+define('TMP_DIR', 'tmp');
+</pre>
+
+
+<h3 id="CHECK_TEMPLATE_UPDATES">Check for new template updates</h3>
+
+<p>Defined by the <code>CHECK_TEMPLATE_UPDATES</code> constant.</p>
+
+<p>Defaults to <code>true</code>.</p>
+
+<h4>Example</h4>
+
+<pre>
+&lt;?php
+define('CHECK_TEMPLATE_UPDATES', false);
+</pre>
+
+
+
+
+<p id="backtotop"><a href="#top">Back to top</a></p>
+
+</div>
+</body>
+</html>

@@ -1,42 +1,24 @@
 <?php
-// ZTemplate 1.0.5
-// © 2011 – 2013 Zdeněk Gromnica
-
-// Basic usage:
-/*
-
-{*comment*}   ->  
-$t->var       ->  $t['var']
-$zt->var      ->  $zt['var']
-{$var}        ->  <?php echo $var ?>
-{if foo}      ->  <?php if (foo) { ?>
-{foreach foo} ->  <?php foreach (foo) { ?>
-{elseif foo}  ->  <?php } elseif (foo) { ?>
-{else}        ->  <?php } else { ?>
-{/if}         ->  <?php } ?>
-{/foreach}    ->  <?php } ?>
-{p foo}       ->  <?php foo ?>
-{foo bar}     ->  <?php foo(bar) ?>
-{foo(bar)}    ->  <?php foo(bar) ?>
-
-1.0.5 – 14:53 1.11.2013
-- removed global $warnings (why was it there?)
-* $templatedir defaults to 'templates/'
-* $currentTemplate defaults to ''
-* $currentTemplate is written without the final /
-*/
+// ZTemplate 2.0.0
+// © 2011 – 2015 Zdeněk Gromnica
 
 // Main template function
 // use this to include a file from the current template
 function template($tfile, $tfolder = '', $tfolder2 = NULL) {
-  global $currentTemplate, $templatedir,
-    $zi, $zt, $t, $baseurl; // Variables templates have access to
+  global $currentTemplate,
+    $t, $baseurl; // Variables templates have access to
+		
+	if (defined('TMP_DIR') == false)
+		define('TMP_DIR', 'tmp');
   
 	if (!isset($currentTemplate)) {
 		$currentTemplate = '';
 	}
-	if (!isset($templatedir)) {
-		$templatedir = 'templates/';
+	
+	if (defined('TEMPLATES_DIR') == false)
+		define('TEMPLATES_DIR', 'templates');
+	if (!empty(TEMPLATES_DIR)) {
+		$templatedir = TEMPLATES_DIR.'/';
 	}
 	
   if ($tfolder === true) // Use a template from a provided absolute path
@@ -47,13 +29,14 @@ function template($tfile, $tfolder = '', $tfolder2 = NULL) {
   $thefile = $tmfolder.$tfile.'.php'; // Original file
   $tmpfolder = TMP_DIR.$tmfolder; // Parsed file dir
   $tmpfile = $tmpfolder.$tfile.'.php'; // Parsed file
-  if (!isset($zi['checknewtemplates']))
-    $zi['checknewtemplates'] = true; // Check for newer template - set to false to increase speed
+	
+	if (defined('CHECK_TEMPLATE_UPDATES') == false) // Check for newer template - set to false to increase speed
+		define('CHECK_TEMPLATE_UPDATES', true);
   
   // Check if parsed version exists
   if (file_exists($tmpfile)) {
     // Check if the parsed version isn't older than the current template file
-    if ($zi['checknewtemplates'] && filemtime($thefile) <= filemtime($tmpfile)) {
+    if (CHECK_TEMPLATE_UPDATES && filemtime($thefile) <= filemtime($tmpfile)) {
       // Include it
       include $tmpfile;
       // We're done here
@@ -86,20 +69,18 @@ function template($tfile, $tfolder = '', $tfolder2 = NULL) {
     array(
       '/\{\*([^\*]|\*[^\}])*\*\}/', // {*comment*}
       '/\$t->([\w\d]+)/', // $t->var
-      '/\$zt->([\w\d]+)/', // $zt->var
       '/\{\$([^}]+)\}/', // {$var}
       '/\{(if|foreach) ([^}]+)}/', // {if foo}
       '/\{elseif ([^}]+)}/', // {elseif foo}
       '/\{else\}/', // {else}
       '/\{\/(if|foreach)\}/', // {/if}
-      '/\{p ([^}]+)}/', // {pfoo}
+      '/\{p ([^}]+)}/', // {p foo}
       '/\{([\w\d]+) ([^}]+)}/', // {foo bar}
       '/\{([^ \r\n\t][^}]+)}/', // {foo}
     ),
     array(
       '',
       '$t[\'\1\']', // $t['var']
-      '$zt[\'\1\']',
       '<?php echo $\1 ?>',
       '<?php \1 (\2) { ?>',
       '<?php } elseif (\1) { ?>',
