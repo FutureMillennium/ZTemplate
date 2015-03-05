@@ -74,7 +74,7 @@ function template($tfile, $tfolder = '', $tfolder2 = NULL) {
       '/\{elseif ([^}]+)}/', // {elseif foo}
       '/\{else\}/', // {else}
       '/\{\/(if|foreach)\}/', // {/if}
-      '/\{p ([^}]+)}/', // {p foo}
+      '/\{\? ([^}]+)}/', // {? foo}
       '/\{([\w\d]+) ([^}]+)}/', // {foo bar}
       '/\{([^ \r\n\t][^}]+)}/', // {foo}
     ),

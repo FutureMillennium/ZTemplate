@@ -231,6 +231,52 @@ template('example');
 </div>
 
 
+<h3>Function call</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+{foo bar}
+{foo(bar)}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<pre>
+&lt;?php foo(bar) ?&gt;
+&lt;?php foo(bar) ?&gt;
+</pre>
+	</div>
+</div>
+
+
+<h3>PHP code</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+{? foo}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<pre>
+&lt;?php foo ?&gt;
+</pre>
+	</div>
+</div>
+
+
 <h3>Template variable shorthand</h3>
 
 <div class="example">
