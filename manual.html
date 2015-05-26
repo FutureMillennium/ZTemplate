@@ -8,7 +8,7 @@
 body {
 	font-family: sans-serif;
 	margin: 50px 50px 125px 50px;
-	line-height: 1.35;
+	line-height: 1.4;
 }
 h2, h3 {
 	margin: 25px 0 15px 0;
@@ -20,6 +20,7 @@ a {
   background-repeat: repeat-x;
   background-position: left bottom;
 	text-decoration: none;
+	padding-bottom: 1px;
 }
 a:hover {
 	color:#203499;
@@ -72,6 +73,8 @@ pre {
 }
 code {
 	font-size: 15px;
+	border: 1px #ddd solid;
+	background: #f8f8f8;
 }
 </style>
 	<script>
@@ -114,7 +117,7 @@ $(window).scroll(function() {
 &lt;/html&gt;
 </pre>
 	</li>
-	<li>Include ZTemplate and call the template, e.g. <code>index.php</code>:
+	<li>Include ZTemplate and call the template, e.g. in <code>index.php</code>:
 		<pre>
 &lt;?php
 require 'libs/ztemplate.php';
