@@ -16,6 +16,8 @@ function template($isDirectoryAbsolute, $templateDirectory = null, $templateName
 	// Current template subdirectory
 	if (!isset($currentTemplate)) {
 		$currentTemplate = '';
+	} else {
+		$currentTemplate .= '/';
 	}
 	
 	// Templates directory
@@ -48,13 +50,13 @@ function template($isDirectoryAbsolute, $templateDirectory = null, $templateName
 		$filename = $templateName; // arg 3
 	} else {
 		if ($isDirectoryAbsolute === false) { // arg 1
-			$subdir = $templatesdir.$templateDirectory.'/'; // arg 2
+			$subdir = $templatesdir.$currentTemplate.$templateDirectory.'/'; // arg 2
 			$filename = $templateName; // arg 3
 		} elseif (isset($templateDirectory)) { // Subdirectory specified
-			$subdir = $templatesdir.$isDirectoryAbsolute.'/'; // arg 1
+			$subdir = $templatesdir.$currentTemplate.$isDirectoryAbsolute.'/'; // arg 1
 			$filename = $templateDirectory; // arg 2
 		} else {
-			$subdir = $templatesdir;
+			$subdir = $templatesdir.$currentTemplate;
 			$filename = $isDirectoryAbsolute; // arg 1
 		}
 		$tmpdir .= $subdir;
