@@ -1,5 +1,5 @@
 <?php
-// ZTemplate 2.0.0
+// ZTemplate 2.0.1
 // © 2011 – 2015 Zdeněk Gromnica
 // see manual.html for more
 
@@ -126,7 +126,7 @@ function ZTemplateParse($content) {
       '/\{else\}/', // {else}
       '/\{\/(if|foreach)\}/', // {/if}
       '/\{\? ([^}]+)}/', // {? foo}
-      '/\{([\w\d]+) ([^}]+)}/', // {foo bar}
+      '/\{([\w\d\:]+) ([^}]+)}/', // {foo bar}
       '/\{([^ \r\n\t][^}]+)}/', // {foo}
     ),
     array(
