@@ -1,9 +1,0 @@
-<!doctype html>
-<html>
-	<head>
-		<title>{$t->title}</title>
-	</head>
-	<body>
-		{$t->content}
-	</body>
-</html>
