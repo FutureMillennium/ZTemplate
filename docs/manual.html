@@ -8,7 +8,7 @@
 body {
 	font-family: sans-serif;
 	margin: 50px 50px 125px 50px;
-	line-height: 1.4;
+	line-height: 1.5;
 }
 h2, h3 {
 	margin: 25px 0 15px 0;
@@ -73,8 +73,10 @@ pre {
 }
 code {
 	font-size: 15px;
-	border: 1px #ddd solid;
 	background: #f8f8f8;
+}
+p {
+	max-width: 600px;
 }
 </style>
 	<script>
@@ -93,9 +95,7 @@ $(window).scroll(function() {
 <body>
 
 <div id="main">
-<h1>ZTemplate</h1>
-
-<h2>version 2.0.0</h2>
+<h1>ZTemplate 3.0</h1>
 
 <p>ZTemplate is a super simple PHP templating system that allows you to write shorthand PHP code directly into HTML.</p>
 
@@ -103,8 +103,8 @@ $(window).scroll(function() {
 
 <ol>
 	<li>Put <code>ztemplate.php</code> somewhere the script can execute it, e.g. <code>libs/ztemplate.php</code>.</li>
-	<li>Make sure the script can write to the <a href="#TMP_DIR">temporary directory</a> – <code>tmp/</code> by default.</li>
-	<li>Place your template in the <a href="#TEMPLATES_DIR"><code>templates/</code> directory</a> (by default), e.g. <code>templates/example.php</code>:
+	<li>Make sure the script can write to a <a href="#TMP_DIR">temporary directory</a> – <code>tmp/</code> by default.</li>
+	<li>Create a template in a <a href="#TEMPLATES_DIR"><code>templates/</code> directory</a> (by default), e.g. <code>templates/foobar.php</code>:
 		<pre>
 &lt;!doctype html&gt;
 &lt;html&gt;
@@ -125,7 +125,7 @@ require 'libs/ztemplate.php';
 $t->title = 'Example title';
 $t->content = 'Hello world!';
 
-template('example');
+Template('foobar');
 </pre>
 	</li>
 </ol>
@@ -147,29 +147,28 @@ template('example');
 <h4>Directory tree</h4>
 
 <pre>
-/
-	index.php
-	libs/
-		ztemplate.php
+index.php
+libs/
+	ztemplate.php
+templates/
+	foobar.php
+tmp/
 	templates/
-		example.php
-	tmp/
-		templates/
-			example.php
+		foobar.php
 </pre>
 
-<p>Note that the <code>tmp/</code> directory and its contents get generated automatically.</p>
+<p>Note that the <code>tmp/</code> directory and its contents get generated automatically and should not be checked into version control.</p>
 
 <h2>Usage</h2>
 
-<h3><code>template($templateName)</code></h3>
+<h3><code>Template($templateName)</code></h3>
 <p>Parses and includes the template named <code>$templateName</code> from the <a href="#TEMPLATES_DIR">templates directory</a>, i.e. <code>TEMPLATES_DIR/$templateName.php</code></p>
 
 <div class="example">
 	<div class="left">
 		<h4>Example</h4>
 
-		<pre>template('foo');</pre>
+		<pre>Template('foo');</pre>
 	</div>
 	
 	<div class="right">
@@ -180,14 +179,14 @@ template('example');
 </div>
 
 
-<h3><code>template($templateSubdirectory, $templateName)</code></h3>
+<h3><code>Template($templateSubdirectory, $templateName)</code></h3>
 <p>Parses and includes the template named <code>$templateName</code> from the <code>$templateSubdirectory</code> subdirectory of the <a href="#TEMPLATES_DIR">templates directory</a>, i.e. <code>TEMPLATES_DIR/$templateSubdirectory/$templateName.php</code></p>
 
 <div class="example">
 	<div class="left">
 		<h4>Example</h4>
 
-		<pre>template('foo', 'bar');</pre>
+		<pre>Template('foo', 'bar');</pre>
 	</div>
 	
 	<div class="right">
@@ -198,18 +197,18 @@ template('example');
 </div>
 
 
-<h3><code>template($isDirectoryAbsolute, $templateDirectory, $templateName)</code></h3>
+<h3><code>Template($isDirectoryAbsolute, $templateDirectory, $templateName)</code></h3>
 <p>If <code>$isDirectoryAbsolute</code> is <code>true</code>, parses and includes the template named <code>$templateName</code> from the absolute directory <code>$templateDirectory</code>, i.e. <code>$templateDirectory/$templateName.php</code></p>
 
-<p>If <code>$isDirectoryAbsolute</code> is <code>false</code>, acts the same as <code>template($templateSubdirectory, $templateName)</code></p>
+<p>If <code>$isDirectoryAbsolute</code> is <code>false</code>, acts the same as <code>Template($templateSubdirectory, $templateName)</code></p>
 
 <div class="example">
 	<div class="left">
 		<h4>Example</h4>
 
-		<pre>template(true, 'foo', 'bar');
-template(true, '/foo', 'bar');
-template(true, '/', 'foo');</pre>
+		<pre>Template(true, 'foo', 'bar');
+Template(true, '/foo', 'bar');
+Template(true, '/', 'foo');</pre>
 	</div>
 	
 	<div class="right">
@@ -376,18 +375,6 @@ template(true, '/', 'foo');</pre>
 
 <h2>Template variables</h2>
 
-<h3 id="baseurl"><code>$baseurl</code><br />Base URL</h3>
-
-<p><code>$baseurl</code></p>
-
-<h4>Example</h4>
-
-<pre>
-&lt;a href=&quot;{$baseurl}&quot;&gt;Home&lt;/a&gt;
-&lt;img src=&quot;{$baseurl}images/foo.png&quot; /&gt;
-</pre>
-
-
 <h3 id="t"><code>$t</code><br />Template variable</h3>
 
 <p><code>$t</code></p>
@@ -417,20 +404,6 @@ template(true, '/', 'foo');</pre>
 <pre>
 &lt;?php
 const TEMPLATES_DIR = 'templates';
-</pre>
-
-
-<h3 id="currentTemplate"><code>$currentTemplate</code><br />Current template subdirectory</h3>
-
-<p>Defined by the <code>$currentTemplate</code> variable. Should be defined without the last <code>/</code> (slash). Empty string (<code>''</code>) means the <a href="#TEMPLATES_DIR">templates directory</a> is used as the current template directory, instead of any subdirectories.</p>
-
-<p>Defaults to <code>''</code> (empty string).</p>
-
-<h4>Example</h4>
-
-<pre>
-&lt;?php
-$currentTemplate = 'foo';
 </pre>
 
 

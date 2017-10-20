@@ -12,18 +12,18 @@ else
 
 switch ($t->page) {
 	case 'foo':
-		template('foo'); // == templates/foo.php
+		Template('foo'); // == templates/foo.php
 		break;
 	
 	case 'bar/qux':
-		template('bar', 'qux'); // == templates/bar/qux.php
+		Template('bar', 'qux'); // == templates/bar/qux.php
 		break;
 		
 	case '/wibble/wobble':
-		template(true, 'wibble', 'wobble'); // == wibble/wobble.php
+		Template(true, 'wibble', 'wobble'); // == wibble/wobble.php
 		break;
 		
 	default:
-		template('notfound'); // == templates/foo.php
+		Template('notfound'); // == templates/foo.php
 		break;
 }
