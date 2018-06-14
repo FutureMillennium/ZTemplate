@@ -1,6 +1,6 @@
 <?php
-// ZTemplate 3.0
-// © 2011 – 2017 Zdeněk Gromnica
+// ZTemplate 3.1
+// © 2011 – 2018 Zdeněk Gromnica
 // see docs/manual.html for more
 
 /*
@@ -120,6 +120,7 @@ function Template($templateNameOrIsAbsolute) {
 				'/\{elseif ([^}]+)}/', // {elseif foo}
 				'/\{else\}/', // {else}
 				'/\{\/(if|foreach)\}/', // {/if} // {/foreach}
+				'/\{\= ([^}]+)}/', // {= foo}
 				'/\{\? ([^}]+)}/', // {? foo}
 				'/\{([\w\d\:]+) ([^}]+)}/', // {foo bar}
 				'/\{([^ \r\n\t][^}]+)}/', // {foo}
@@ -131,6 +132,7 @@ function Template($templateNameOrIsAbsolute) {
 				'<?php } elseif (\1) { ?>',
 				'<?php } else { ?>',
 				'<?php } ?>',
+				'<?php echo \1 ?>',
 				'<?php \1 ?>',
 				'<?php \1(\2) ?>',
 				'<?php \1 ?>',

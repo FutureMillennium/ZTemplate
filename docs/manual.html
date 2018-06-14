@@ -71,6 +71,9 @@ pre {
 	line-height: 18px;
 	margin: 0 0 15px 0;
 }
+.example p {
+	padding: 25px;
+}
 code {
 	font-size: 15px;
 	background: #f8f8f8;
@@ -95,7 +98,7 @@ $(window).scroll(function() {
 <body>
 
 <div id="main">
-<h1>ZTemplate 3.0</h1>
+<h1>ZTemplate 3.1</h1>
 
 <p>ZTemplate is a super simple PHP templating system that allows you to write shorthand PHP code directly into HTML.</p>
 
@@ -104,7 +107,7 @@ $(window).scroll(function() {
 <ol>
 	<li>Put <code>ztemplate.php</code> somewhere the script can execute it, e.g. <code>libs/ztemplate.php</code>.</li>
 	<li>Make sure the script can write to a <a href="#TMP_DIR">temporary directory</a> – <code>tmp/</code> by default.</li>
-	<li>Create a template in a <a href="#TEMPLATES_DIR"><code>templates/</code> directory</a> (by default), e.g. <code>templates/foobar.php</code>:
+	<li>Create a PHP template file in the <a href="#TEMPLATES_DIR"><code>templates/</code> directory</a> (by default), e.g. <code>templates/foobar.php</code>:
 		<pre>
 &lt;!doctype html&gt;
 &lt;html&gt;
@@ -371,6 +374,28 @@ Template(true, '/', 'foo');</pre>
 </div>
 
 
+<h3><code>{= foo}</code><br />Print the result of PHP code</h3>
+
+<div class="example">
+	<div class="left">
+	<h4>Example</h4>
+
+	<pre>
+{= foo}
+</pre>
+	</div>
+	
+	<div class="right">
+
+	<h5>Turns into</h5>
+
+	<pre>
+&lt;?php echo foo ?&gt;
+</pre>
+	</div>
+</div>
+
+
 
 
 <h2>Template variables</h2>
@@ -421,13 +446,15 @@ const TMP_DIR = 'tmp';
 </pre>
 
 
-<h3 id="CHECK_TEMPLATE_UPDATES"><code>CHECK_TEMPLATE_UPDATES</code><br />Check for new template updates</h3>
+<h3 id="CHECK_TEMPLATE_UPDATES"><code>CHECK_TEMPLATE_UPDATES</code><br />Check for template file changes</h3>
 
 <p>Defined by the <code>CHECK_TEMPLATE_UPDATES</code> constant.</p>
 
-<p>If <code>true</code>, ZTemplate compares the date changed of the template file with the date of the pre-generated (parsed) template file in the <a href="#TMP_DIR">temporary directory</a>. If it's newer, it gets re-generated. If there is no pre-generated template file, it gets generated.</p>
+<p>If <code>true</code>, ZTemplate compares the date changed of the template file with the date of the pre-generated (parsed) template file in the <a href="#TMP_DIR">temporary directory</a>. If it's newer, it gets re-generated.</p>
 
-<p>If <code>false</code>, ZTemplate doesn't compare the date changed of the template file with the date of the pre-generated (parsed) template file in the <a href="#TMP_DIR">temporary directory</a>. If there is no pre-generated template file, it gets generated as normal.</p>
+<p>If <code>false</code>, ZTemplate doesn't compare the date changed of the template file with the date of the pre-generated (parsed) template file in the <a href="#TMP_DIR">temporary directory</a>.</p>
+
+<p>If there is no pre-generated template file, it gets generated in either case.</p>
 
 <p>Set to <code>false</code> if you don't intend to change the template files anymore to gain a minuscule performance boost. If you delete the pre-generated template files in the <a href="#TMP_DIR">temporary directory</a>, they will get re-generated even when <code>CHECK_TEMPLATE_UPDATES</code> is <code>false</code>.</p>
 
